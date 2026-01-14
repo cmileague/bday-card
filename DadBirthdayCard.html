@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happy Birthday, Dad!</title>
+  <style>
+    :root{
+      --bg: #f6f1e8;
+      --ink:#1f2937;
+      --paper:#fffaf2;
+      --shadow: 0 18px 45px rgba(0,0,0,.18);
+      --env:#d9b38c;
+      --env2:#c79a71;
+      --seal:#b91c1c;
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 50% 0%, #ffffff 0%, var(--bg) 45%, #efe4d7 100%);
+      color:var(--ink);
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
+
+    .wrap{
+      width:min(920px, 100%);
+      display:grid;
+      gap:18px;
+      justify-items:center;
+      text-align:center;
+    }
+
+    h1{
+      margin:0;
+      font-size:clamp(22px, 3vw, 34px);
+      letter-spacing:.2px;
+    }
+    p{ margin:0; opacity:.85; }
+
+    .scene{
+      width:min(720px, 100%);
+      aspect-ratio: 16 / 10;
+      position:relative;
+      display:grid;
+      place-items:center;
+      user-select:none;
+    }
+
+    .hint{
+      font-size:14px;
+      opacity:.7;
+      margin-top:-4px;
+    }
+
+    .envelope{
+      width:min(520px, 92%);
+      height:320px;
+      position:relative;
+      cursor:pointer;
+      filter: drop-shadow(var(--shadow));
+      transform: translateZ(0);
+    }
+
+    .env-base{
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, var(--env) 0%, var(--env2) 100%);
+      border-radius: var(--radius);
+      overflow:hidden;
+    }
+
+    .env-bottom{
+      position:absolute; left:0; right:0; bottom:-1px; height:68%;
+      background: linear-gradient(180deg, rgba(255,255,255,.10) 0%, rgba(0,0,0,.06) 100%);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      opacity:.55;
+    }
+
+    .env-left, .env-right{
+      position:absolute; top:0; bottom:0; width:55%;
+      background: rgba(255,255,255,.10);
+      opacity:.55;
+    }
+    .env-left{ left:0; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+    .env-right{ right:0; clip-path: polygon(100% 0, 0 50%, 100% 100%); }
+
+    .env-flap{
+      position:absolute; left:0; right:0; top:0; height:62%;
+      background: linear-gradient(180deg, #e3c2a0 0%, #caa07a 100%);
+      transform-origin: top center;
+      transform: rotateX(0deg);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      transition: transform 900ms cubic-bezier(.2,.9,.2,1);
+      border-top-left-radius: var(--radius);
+      border-top-right-radius: var(--radius);
+    }
+
+    .seal{
+      width:64px; height:64px;
+      position:absolute;
+      left:50%; top:52%;
+      transform: translate(-50%,-50%);
+      border-radius:999px;
+      background: radial-gradient(circle at 35% 30%, #ef4444 0%, var(--seal) 55%, #7f1d1d 100%);
+      box-shadow: 0 10px 24px rgba(0,0,0,.25);
+      display:grid;
+      place-items:center;
+      color:white;
+      font-weight:700;
+      letter-spacing:.8px;
+      transition: opacity 400ms ease;
+    }
+
+    .contents{
+      width:min(460px, 86%);
+      position:absolute;
+      left:50%;
+      bottom:22px;
+      transform: translateX(-50%);
+      display:grid;
+      gap:10px;
+      pointer-events:none;
+
+      opacity:0;
+      transform: translateX(-50%) translateY(40px);
+      transition: opacity 450ms ease, transform 950ms cubic-bezier(.2,.9,.2,1);
+    }
+
+    .card{
+      background: var(--paper);
+      border-radius: 16px;
+      box-shadow: 0 12px 28px rgba(0,0,0,.14);
+      border: 1px solid rgba(0,0,0,.06);
+      overflow:hidden;
+    }
+
+    /* Photo strip (bigger + "printed photo" feel) */
+    .photos{
+      display:flex;
+      gap:10px;
+      padding:12px;
+      background: linear-gradient(180deg, #fff7ed 0%, #fffaf2 100%);
+      overflow:hidden;
+      align-items:center;
+    }
+    .photos img{
+      flex: 1 1 0;
+      min-width: 0;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      border-radius:14px;
+      border: 1px solid rgba(0,0,0,.10);
+      background:#f3f4f6;
+      box-shadow: 0 10px 18px rgba(0,0,0,.12);
+      transform: rotate(var(--r, 0deg));
+    }
+    .photos img:nth-child(1){ --r:-2deg; }
+    .photos img:nth-child(2){ --r: 1deg; }
+    .photos img:nth-child(3){ --r:-1deg; }
+
+    .postcard{
+      padding:18px 18px 16px;
+      text-align:left;
+      position:relative;
+    }
+    .postcard h2{
+      margin:0 0 8px;
+      font-size:18px;
+    }
+    .postcard .msg{
+      margin:0;
+      line-height:1.45;
+      font-size:15px;
+    }
+    .postcard .sig{
+      margin-top:12px;
+      font-weight:600;
+    }
+    .postcard::after{
+      content:"";
+      position:absolute; inset:12px;
+      border: 2px dashed rgba(0,0,0,.10);
+      border-radius: 12px;
+      pointer-events:none;
+    }
+
+    .open .env-flap{ transform: rotateX(170deg); }
+    .open .seal{ opacity:0; }
+    .open .contents{
+      opacity:1;
+      transform: translateX(-50%) translateY(-140px);
+    }
+
+    .envelope:hover{ transform: translateY(-2px); transition: transform 200ms ease; }
+    .open .envelope:hover{ transform:none; }
+
+    @media (max-width:520px){
+      .envelope{ height:280px; }
+      .open .contents{ transform: translateX(-50%) translateY(-120px); }
+      .photos img{ aspect-ratio: 1/1; }
+    }
+
+    .footer{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin-top:4px;
+      font-size:13px;
+      opacity:.75;
+    }
+
+    button{
+      border:0;
+      background: #111827;
+      color:white;
+      padding:10px 14px;
+      border-radius:999px;
+      cursor:pointer;
+      font-weight:600;
+    }
+    button.secondary{
+      background: transparent;
+      border: 1px solid rgba(0,0,0,.16);
+      color: var(--ink);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Happy Birthday, Dad 🎉</h1>
+    <p class="hint">Click the envelope to open it.</p>
+
+    <div class="scene" id="scene">
+      <div class="envelope" id="envelope" role="button" aria-label="Open birthday envelope" tabindex="0">
+        <div class="env-base">
+          <div class="env-left"></div>
+          <div class="env-right"></div>
+          <div class="env-bottom"></div>
+        </div>
+
+        <div class="seal">♥</div>
+        <div class="env-flap"></div>
+
+        <div class="contents" aria-hidden="true">
+          <div class="card">
+            <div class="photos" id="photos">
+              <img src="photo1.jpeg" alt="Photo 1">
+              <img src="photo2.jpeg" alt="Photo 2">
+              <img src="photo3.jpeg" alt="Photo 3">
+            </div>
+          </div>
+
+          <div class="card postcard">
+            <h2>Dear Dad,</h2>
+            <p class="msg">
+              happy birthday to you! I'm thinking of you and wishing we could share a celebration with good food and drink together!
+              Instead I'm still enjoying the memories from our last few visits, and here's to many more! I hope you have a great day,
+              may it be as special as you are!
+            </p>
+            <div class="sig">Love, Mike</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button id="toggle">Open / Close</button>
+      <button class="secondary" id="replay">Replay</button>
+    </div>
+  </div>
+
+  <script>
+    const scene = document.getElementById('scene');
+    const envelope = document.getElementById('envelope');
+    const toggleBtn = document.getElementById('toggle');
+    const replayBtn = document.getElementById('replay');
+
+    function setOpen(isOpen){
+      scene.classList.toggle('open', isOpen);
+      envelope.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+
+    function toggle(){
+      setOpen(!scene.classList.contains('open'));
+    }
+
+    function replay(){
+      setOpen(false);
+      void scene.offsetWidth; // reflow to restart animation
+      setOpen(true);
+    }
+
+    envelope.addEventListener('click', toggle);
+    envelope.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+
+    toggleBtn.addEventListener('click', toggle);
+    replayBtn.addEventListener('click', replay);
+
+    // If an image is missing, hide it (prevents broken icons)
+    document.querySelectorAll('#photos img').forEach(img => {
+      img.addEventListener('error', () => img.style.display = 'none');
+    });
+  </script>
+</body>
+</html>
